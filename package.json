@@ -1,0 +1,12 @@
+{
+  "name": "march-madness-pricing-showdown",
+  "version": "2.0.0",
+  "description": "Classroom multiplayer pricing strategy simulation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}

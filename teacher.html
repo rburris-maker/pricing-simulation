@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎓 Teacher Dashboard — Pricing Showdown</title>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06090f;--bg2:#0b1020;--bg3:#111827;--bg4:#1a2540;--orange:#FF6B35;--od:rgba(255,107,53,0.15);--gold:#F5C842;--gd:rgba(245,200,66,0.15);--blue:#3B7FE8;--green:#1DB87A;--red:#E8455A;--text:#F0F4FF;--t2:#A0AABE;--t3:#5A6880;--b:rgba(255,255,255,0.08);--b2:rgba(255,255,255,0.14);--go:0 0 20px rgba(255,107,53,0.35),0 0 60px rgba(255,107,53,0.1);--gg:0 0 20px rgba(245,200,66,0.35),0 0 60px rgba(245,200,66,0.1);--r:10px;--rs:6px}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}
+body{font-family:'Barlow Condensed',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(90deg,transparent 0,transparent 119px,rgba(255,255,255,0.012) 119px,rgba(255,255,255,0.012) 120px),repeating-linear-gradient(0deg,transparent 0,transparent 119px,rgba(255,255,255,0.012) 119px,rgba(255,255,255,0.012) 120px);pointer-events:none;z-index:0}
+#app{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
+/* HEADER */
+#hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:linear-gradient(135deg,#0a1020,#0d1530);border-bottom:2px solid var(--orange);box-shadow:0 4px 30px rgba(255,107,53,0.2);position:sticky;top:0;z-index:100;min-height:58px;gap:10px;flex-wrap:wrap}
+.ht{font-family:'Russo One',sans-serif;font-size:17px;letter-spacing:1px}.ht span{color:var(--orange)}
+.badge{font-family:'Russo One',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:4px 11px;border-radius:20px;white-space:nowrap}
+.bo{background:var(--od);border:1px solid var(--orange);color:var(--orange)}
+.bb{background:rgba(59,127,232,0.15);border:1px solid var(--blue);color:var(--blue)}
+.bg{background:rgba(29,184,122,0.15);border:1px solid var(--green);color:var(--green)}
+/* LAYOUT */
+#body{display:flex;flex:1}
+#sidebar{width:270px;min-width:270px;background:var(--bg2);border-right:1px solid var(--b);overflow-y:auto;padding:12px 10px;display:flex;flex-direction:column;gap:12px}
+.stitle{font-family:'Russo One',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);text-align:center;padding-bottom:8px;border-bottom:1px solid var(--b)}
+/* STUDENTS PANEL */
+.spanel-title{font-family:'Russo One',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:5px 2px 7px}
+.sc-row{display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);margin-bottom:3px;font-size:11px;font-weight:600}
+.sc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sc-name{flex:1;color:var(--text)}
+.sc-vote{font-size:10px;letter-spacing:1px;text-transform:uppercase}
+/* LEADERBOARD */
+.lb-label{font-family:'Russo One',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);padding:4px 2px 7px}
+.lb-row{display:flex;align-items:center;gap:7px;padding:6px 9px;background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);margin-bottom:4px}
+.lb-row.g1{border-color:rgba(245,200,66,0.5)}.lb-row.g2{border-color:rgba(192,192,192,0.35)}.lb-row.g3{border-color:rgba(205,127,50,0.35)}
+.lb-rank{font-family:'Russo One',sans-serif;font-size:13px;width:20px;text-align:center}
+.lb-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.lb-name{flex:1;font-size:12px;font-weight:600}
+.lb-pts{font-family:'Russo One',sans-serif;font-size:14px;color:var(--gold)}
+/* BRACKET */
+.br-lbl{font-family:'Russo One',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--orange);padding:6px 2px 4px}
+.br-mu{display:flex;flex-direction:column;background:var(--bg3);border:1px solid var(--b);border-radius:var(--rs);overflow:hidden;margin-bottom:4px}
+.br-mu.active{border-color:var(--orange);box-shadow:var(--go)}.br-mu.done{border-color:rgba(29,184,122,0.3)}
+.br-slot{display:flex;align-items:center;gap:6px;padding:5px 8px;font-size:11px;font-weight:600;border-bottom:1px solid var(--b)}
+.br-slot:last-child{border-bottom:none}
+.br-slot.win{background:rgba(29,184,122,0.12);color:var(--green)}.br-slot.lose{color:var(--t3);opacity:0.5;text-decoration:line-through}.br-slot.tbd{color:var(--t3);font-style:italic}
+/* MAIN */
+#main{flex:1;padding:18px 22px;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
+/* LOBBY */
+.lobby{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:28px 20px}
+.ltitle{font-family:'Russo One',sans-serif;font-size:clamp(24px,4vw,52px);line-height:1.1;letter-spacing:2px}
+.ltitle span{color:var(--orange);display:block}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:720px}
+.chip{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rs);padding:7px 10px;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600}
+/* URL PANEL */
+.url-panel{background:linear-gradient(135deg,rgba(29,184,122,0.1),rgba(29,184,122,0.03));border:2px solid var(--green);border-radius:var(--r);padding:18px 22px;text-align:center;width:100%;max-width:680px}
+.url-panel-lbl{font-family:'Russo One',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.url-display{font-family:'Russo One',sans-serif;font-size:clamp(16px,3vw,28px);color:var(--text);background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rs);padding:12px 20px;letter-spacing:1px;margin-bottom:8px;word-break:break-all}
+.url-note{font-size:12px;color:var(--t3);line-height:1.5}
+/* TEAM SETUP */
+.team-box{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r);padding:18px 20px;width:100%;max-width:680px}
+.team-box-title{font-family:'Russo One',sans-serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-bottom:12px}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.trow{display:flex;align-items:center;gap:7px;background:var(--bg4);border:1px solid var(--b2);border-radius:var(--rs);padding:6px 10px}
+.tswch{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.tinp{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600}
+.tinp::placeholder{color:var(--t3)}
+.tdel{background:none;border:none;color:var(--t3);cursor:pointer;font-size:14px;line-height:1;transition:color 0.2s}
+.tdel:hover{color:var(--red)}
+/* MATCHUP */
+.mhdr{text-align:center}
+.mhdr h2{font-family:'Russo One',sans-serif;font-size:22px;letter-spacing:2px}
+.mhdr p{font-size:13px;color:var(--t2);margin-top:4px}
+.vs-row{display:flex;align-items:center;justify-content:center}
+.vs-txt{font-family:'Russo One',sans-serif;font-size:40px;color:var(--orange);text-shadow:var(--go);letter-spacing:4px}
+.cards{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start}
+.co-card{background:var(--bg3);border:2px solid var(--b2);border-radius:var(--r);overflow:hidden}
+.co-card.wc{border-color:var(--gold);box-shadow:var(--gg);animation:wp .5s ease}
+.co-card.lc{border-color:var(--t3);opacity:0.6}
+@keyframes wp{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.cchdr{padding:14px 15px 12px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:12px}
+.cemoji{font-size:38px;line-height:1}
+.cname{font-family:'Russo One',sans-serif;font-size:20px;letter-spacing:1px}
+.ctagline{font-size:11px;color:var(--t3);font-style:italic;margin-top:2px}
+.stag{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.shid{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:rgba(255,255,255,0.05);border:1px dashed var(--t3);color:var(--t3)}
+.ccbody{padding:12px 15px 15px}
+.sdesc{font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:12px;font-family:'Barlow',sans-serif}
+.shidc{font-size:12px;color:var(--t3);font-style:italic;line-height:1.5;margin-bottom:12px;font-family:'Barlow',sans-serif;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.06);border-radius:5px;padding:8px 10px}
+.attrs{display:flex;flex-direction:column;gap:5px}
+.ar{display:flex;align-items:center;gap:8px}
+.albl{font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--t3);width:112px;flex-shrink:0}
+.abg{flex:1;height:6px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden}
+.afill{height:100%;border-radius:3px;transition:width .5s}
+.aval{font-size:11px;font-weight:700;width:24px;text-align:right;color:var(--text)}
+.ebtn{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:transparent;border:1px solid var(--b2);color:var(--t3);border-radius:var(--rs);padding:4px 9px;cursor:pointer;transition:all .2s;margin-top:8px}
+.ebtn:hover{border-color:var(--orange);color:var(--orange)}
+/* VOTE LIVE FEED */
+.vote-feed{background:linear-gradient(135deg,#0d1530,#0a1020);border:2px solid var(--blue);border-radius:var(--r);padding:18px 20px}
+.vote-feed h3{font-family:'Russo One',sans-serif;font-size:15px;letter-spacing:2px;text-align:center;margin-bottom:14px}
+.vf-teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.vf-team{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rs);padding:12px 14px}
+.vf-tname{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.vf-tdot{width:10px;height:10px;border-radius:50%}
+.vf-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin-bottom:5px;background:rgba(255,255,255,0.05)}
+.vf-a{background:var(--blue)}.vf-b{background:var(--orange)}
+.vf-counts{display:flex;justify-content:space-between;font-size:11px;color:var(--t2)}
+.vf-total{font-size:11px;color:var(--t3);margin-top:4px;text-align:center}
+/* MARKET BANNER */
+.mkb{border-radius:var(--r);padding:18px 24px;display:flex;align-items:center;gap:16px;border:2px solid;animation:mR .5s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes mR{0%{opacity:0;transform:scale(0.9) translateY(-10px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+.mkb-icon{font-size:46px;line-height:1;flex-shrink:0}
+.mkb-ey{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:3px;font-weight:700}
+.mkb-name{font-family:'Russo One',sans-serif;font-size:24px;letter-spacing:2px;margin-bottom:5px}
+.mkb-desc{font-family:'Barlow',sans-serif;font-size:13px;color:var(--t2);line-height:1.5}
+/* RESULTS */
+.rw{display:flex;flex-direction:column;gap:14px}
+.wann{background:linear-gradient(135deg,rgba(245,200,66,0.1),rgba(245,200,66,0.03));border:2px solid var(--gold);border-radius:var(--r);padding:20px;text-align:center;box-shadow:var(--gg)}
+.wlbl{font-family:'Russo One',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.wname{font-family:'Russo One',sans-serif;font-size:clamp(24px,4vw,44px);letter-spacing:2px;display:flex;align-items:center;justify-content:center;gap:12px}
+.wsub{font-size:13px;color:var(--t2);margin-top:4px}
+.sgrid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:start}
+.scard{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r);padding:14px}
+.scard.sw{border-color:var(--gold)}.scard.sl{opacity:0.6}
+.sname{font-family:'Russo One',sans-serif;font-size:15px;margin-bottom:2px}
+.sbrkdn{display:flex;flex-direction:column;gap:4px}
+.sln{display:flex;justify-content:space-between;align-items:center;font-size:11px}
+.slbl{color:var(--t2)}.sval{font-weight:700;color:var(--text)}.sval.p{color:var(--green)}.sval.n{color:var(--red)}
+.stot{display:flex;justify-content:space-between;align-items:center;padding-top:5px;border-top:1px solid var(--b2);margin-top:2px}
+.stot-l{font-family:'Russo One',sans-serif;font-size:11px;letter-spacing:1px}
+.stot-v{font-family:'Russo One',sans-serif;font-size:17px;color:var(--gold)}
+.svs{font-family:'Russo One',sans-serif;font-size:22px;color:var(--t3);text-align:center;letter-spacing:3px}
+.expl{background:linear-gradient(135deg,#0d1530,#0a1020);border:1px solid var(--b2);border-radius:var(--r);padding:16px 18px}
+.expl-lbl{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:7px;font-weight:700}
+.expl-txt{font-family:'Barlow',sans-serif;font-size:14px;line-height:1.7;color:var(--t2)}
+.expl-txt strong{color:var(--text)}
+.cond-card{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r);padding:13px 16px;display:flex;align-items:flex-start;gap:12px}
+.cond-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+.cond-ey{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:2px}
+.cond-name{font-family:'Russo One',sans-serif;font-size:17px;margin-bottom:4px}
+.cond-desc{font-family:'Barlow',sans-serif;font-size:12px;color:var(--t2);line-height:1.5}
+/* TEAM RESULTS */
+.trc{background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r);padding:16px 18px}
+.trc-title{font-family:'Russo One',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--t2);margin-bottom:11px}
+.trr{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:var(--rs);margin-bottom:5px;font-size:13px;font-weight:600}
+.trr.ok{background:rgba(29,184,122,0.12);border:1px solid rgba(29,184,122,0.3)}
+.trr.no{background:rgba(232,69,90,0.07);border:1px solid rgba(232,69,90,0.18);opacity:0.75}
+.trr.nv{background:rgba(255,255,255,0.02);border:1px solid var(--b);opacity:0.5}
+.trd{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.trn{flex:1}.trv{font-size:11px;color:var(--t3)}.tro{font-size:11px;font-weight:700}.trpts{font-family:'Russo One',sans-serif;font-size:16px;color:var(--gold)}
+/* CHAMPION */
+.champ{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:32px;animation:fi .6s ease}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.ch-crown{font-size:68px;animation:fl 3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.ch-lbl{font-family:'Russo One',sans-serif;font-size:12px;letter-spacing:6px;text-transform:uppercase;color:var(--gold)}
+.ch-name{font-family:'Russo One',sans-serif;font-size:clamp(28px,6vw,64px);color:var(--text);letter-spacing:3px;display:flex;align-items:center;justify-content:center;gap:14px}
+.ch-sub{font-size:16px;color:var(--t2);max-width:520px;line-height:1.6;font-family:'Barlow',sans-serif}
+.flb{width:100%;max-width:460px}
+.flbr{display:flex;align-items:center;gap:11px;padding:10px 15px;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rs);margin-bottom:6px}
+.flbr.gr{border-color:var(--gold);background:rgba(245,200,66,0.07)}
+.flbr-rank{font-family:'Russo One',sans-serif;font-size:17px;width:24px;text-align:center}
+.flbr-dot{width:12px;height:12px;border-radius:50%}
+.flbr-name{flex:1;font-size:15px;font-weight:700}
+.flbr-pts{font-family:'Russo One',sans-serif;font-size:18px;color:var(--gold)}
+.flbr-cor{font-size:10px;color:var(--t3);text-align:right}
+/* CONFETTI */
+.ccc{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:200}
+.ccp{position:absolute;border-radius:2px;animation:cf linear forwards}
+@keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+/* TEACHER BAR */
+#tbar{background:var(--bg2);border-top:1px solid var(--b2);padding:9px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:50px}
+.tblbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-right:2px;flex-shrink:0}
+.sep{width:1px;height:24px;background:var(--b2);margin:0 2px;flex-shrink:0}
+.f1{flex:1}
+/* BUTTONS */
+.btn{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:none;border-radius:var(--rs);padding:8px 15px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:disabled{opacity:0.3;cursor:not-allowed}
+.btn-p{background:var(--orange);color:white;box-shadow:0 2px 12px rgba(255,107,53,0.4)}
+.btn-p:not(:disabled):hover{background:#ff8055;transform:translateY(-1px)}
+.btn-g{background:var(--gold);color:#1a1200;box-shadow:0 2px 12px rgba(245,200,66,0.3)}
+.btn-g:not(:disabled):hover{background:#ffd84a;transform:translateY(-1px)}
+.btn-s{background:var(--bg4);border:1px solid var(--b2);color:var(--text)}
+.btn-s:not(:disabled):hover{border-color:var(--blue);color:var(--blue);transform:translateY(-1px)}
+.btn-d{background:rgba(232,69,90,0.15);border:1px solid var(--red);color:var(--red)}
+.btn-d:not(:disabled):hover{background:rgba(232,69,90,0.3);transform:translateY(-1px)}
+.btn-sm{font-size:10px;padding:5px 11px}
+.btn-lg{font-size:15px;padding:11px 26px;letter-spacing:2px}
+.btn-run{background:linear-gradient(135deg,#FF6B35,#FF4040);color:white;font-size:13px;padding:10px 22px;letter-spacing:2px;border:none;animation:rp 2s ease-in-out infinite}
+@keyframes rp{0%,100%{box-shadow:0 4px 24px rgba(255,107,53,0.5)}50%{box-shadow:0 4px 40px rgba(255,107,53,0.8)}}
+.btn-run:hover{transform:translateY(-2px) scale(1.02)}
+/* MODAL */
+.mov{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;padding:18px;animation:fi .2s}
+.mbox{background:var(--bg2);border:1px solid var(--b2);border-radius:13px;box-shadow:0 8px 40px rgba(0,0,0,0.7);width:100%;max-width:540px;max-height:90vh;overflow-y:auto;animation:ms .3s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes ms{0%{opacity:0;transform:scale(0.9) translateY(20px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+.mhd{padding:15px 19px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between}
+.mtitle{font-family:'Russo One',sans-serif;font-size:16px;letter-spacing:1px;display:flex;align-items:center;gap:9px}
+.mclose{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;line-height:1;transition:color .2s}
+.mclose:hover{color:var(--text)}
+.mbody{padding:19px}.mfooter{padding:12px 19px;border-top:1px solid var(--b);display:flex;justify-content:flex-end;gap:9px}
+.fg{margin-bottom:12px}
+.fl{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:4px;letter-spacing:0.5px}
+.fsel,.finp{width:100%;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--rs);padding:7px 11px;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:13px;transition:border-color .2s}
+.fsel:focus,.finp:focus{outline:none;border-color:var(--blue)}
+option{background:var(--bg3)}
+.aer{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.ael{font-size:11px;font-weight:600;color:var(--t2);width:125px;flex-shrink:0}
+.aesl{flex:1;accent-color:var(--orange);cursor:pointer}
+.aev{font-family:'Russo One',sans-serif;font-size:14px;width:32px;text-align:center;color:var(--text)}
+/* Strategy colors */
+.s-prem{background:rgba(168,85,247,0.2);color:#c084fc;border:1px solid rgba(168,85,247,0.4)}
+.s-pen{background:rgba(59,127,232,0.2);color:#93c5fd;border:1px solid rgba(59,127,232,0.4)}
+.s-com{background:rgba(0,200,232,0.2);color:#67e8f9;border:1px solid rgba(0,200,232,0.4)}
+.s-dis{background:rgba(245,200,66,0.2);color:#fde68a;border:1px solid rgba(245,200,66,0.4)}
+.s-dyn{background:rgba(255,107,53,0.2);color:#fdba74;border:1px solid rgba(255,107,53,0.4)}
+.s-val{background:rgba(29,184,122,0.2);color:#6ee7b7;border:1px solid rgba(29,184,122,0.4)}
+.s-psy{background:rgba(236,72,153,0.2);color:#f9a8d4;border:1px solid rgba(236,72,153,0.4)}
+.s-bun{background:rgba(52,211,153,0.2);color:#a7f3d0;border:1px solid rgba(52,211,153,0.4)}
+.hidden{display:none!important}
+@keyframes mR{0%{opacity:0;transform:scale(0.9) translateY(-10px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes fdU{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){#sidebar{width:190px;min-width:190px}.cards{grid-template-columns:1fr}.sgrid{grid-template-columns:1fr}.chips{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){#sidebar{display:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header id="hdr">
+    <div style="display:flex;align-items:center;gap:9px;"><span style="font-size:22px">🏆</span><div class="ht">MARCH MADNESS: <span>PRICING SHOWDOWN</span></div></div>
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+      <div class="badge bo" id="rdBadge">LOBBY</div>
+      <div class="badge bb" id="phBadge">SETUP</div>
+      <div class="badge bg" id="stBadge">0 STUDENTS</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+      <button class="btn btn-s btn-sm" onclick="showBracket()">📊 Bracket</button>
+      <button class="btn btn-s btn-sm" onclick="showStrategies()">📚 Strategies</button>
+    </div>
+  </header>
+  <div id="body">
+    <aside id="sidebar">
+      <div class="stitle">STUDENTS &amp; LEADERBOARD</div>
+      <div id="slb"></div>
+      <div id="sbracket"></div>
+    </aside>
+    <main id="main"></main>
+  </div>
+  <div id="tbar">
+    <span class="tblbl">🎓 TEACHER:</span>
+    <div id="tc" style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;"></div>
+  </div>
+</div>
+<div id="mc"></div>
+
+<script>
+let S = null; // server state
+let studentUrl = '';
+let teamEdits = []; // local team name edits before commit
+
+function sc(strategy) {
+  const m={'Premium Pricing':'s-prem','Penetration Pricing':'s-pen','Competitive Pricing':'s-com','Discount Pricing':'s-dis','Dynamic Pricing':'s-dyn','Value Pricing':'s-val','Psychological Pricing':'s-psy','Bundle Pricing':'s-bun'};
+  return m[strategy]||'';
+}
+function ac(v){if(v>=85)return'linear-gradient(90deg,#10B981,#34D399)';if(v>=65)return'linear-gradient(90deg,#3B82F6,#60A5FA)';if(v>=45)return'linear-gradient(90deg,#F59E0B,#FCD34D)';return'linear-gradient(90deg,#EF4444,#F87171)'}
+
+// ── WebSocket ──────────────────────────────────────────────────
+const ws = new WebSocket(`ws://${location.host}?role=teacher`);
+ws.onmessage = e => { S = JSON.parse(e.data); render(); };
+ws.onclose   = () => showToast('⚠️ Disconnected from server — refresh to reconnect','#EF4444');
+ws.onerror   = () => showToast('⚠️ Connection error','#EF4444');
+function send(msg) { if (ws.readyState===1) ws.send(JSON.stringify(msg)); }
+function action(a) { send({ type:'action', action:a }); }
+
+// ── RENDER DISPATCH ────────────────────────────────────────────
+function render() {
+  if (!S) return;
+  studentUrl = `http://${location.hostname}:${location.port||80}/student`;
+  document.getElementById('rdBadge').textContent = (S.roundLabel||'') + (S.phase!=='lobby'?' · '+(S.roundName||''):'LOBBY');
+  document.getElementById('phBadge').textContent = ({lobby:'SETUP',matchup:'ANALYSIS',voting:'VOTING',simulating:'RUNNING',results:'RESULTS',champion:'FINAL'}[S.phase]||S.phase).toUpperCase();
+  document.getElementById('stBadge').textContent = (S.totalStudents||0) + ' STUDENT' + (S.totalStudents===1?'':'S');
+  renderSidebar();
+  switch(S.phase) {
+    case 'lobby':      renderLobby();    break;
+    case 'matchup':    renderMatchup();  break;
+    case 'voting':     renderVoting();   break;
+    case 'simulating': renderSimulating();break;
+    case 'results':    renderResults();  break;
+    case 'champion':   renderChampion(); break;
+  }
+}
+
+// ── SIDEBAR ────────────────────────────────────────────────────
+function renderSidebar() {
+  if (!S) return;
+  // Students panel
+  const cs = S.connectedStudents || [];
+  let sp = `<div class="spanel-title" style="color:var(--green)">👥 CONNECTED (${cs.length})</div>`;
+  if (cs.length===0) sp+=`<div style="font-size:11px;color:var(--t3);padding:4px 2px">No students yet...</div>`;
+  const tvs = S.teamVoteSummary || {};
+  cs.forEach(st => {
+    const t = (S.teams||[]).find(x=>x.id===st.teamId);
+    const vLabel = st.vote ? (st.vote==='a'?'→ A':'→ B') : '';
+    sp+=`<div class="sc-row"><div class="sc-dot" style="background:${t?.color||'#888'}"></div><span class="sc-name">${st.name||'...'}</span><span class="sc-vote" style="color:${st.vote?'var(--green)':'var(--t3)'}">${vLabel}</span></div>`;
+  });
+  // Leaderboard
+  const sorted = [...(S.teams||[])].sort((a,b)=>b.points-a.points);
+  const medals = ['🥇','🥈','🥉'];
+  let lb = `<div class="lb-label">🏆 LEADERBOARD</div>`;
+  sorted.forEach((t,i)=>{ lb+=`<div class="lb-row ${i===0?'g1':i===1?'g2':i===2?'g3':''}"><div class="lb-rank">${medals[i]||(i+1)}</div><div class="lb-dot" style="background:${t.color}"></div><div class="lb-name">${t.name}</div><div style="text-align:right"><div class="lb-pts">${t.points}</div><div style="font-size:9px;color:var(--t3)">pts</div></div></div>`; });
+  document.getElementById('slb').innerHTML = sp + lb;
+  // Bracket
+  if (!S.bracket) { document.getElementById('sbracket').innerHTML=''; return; }
+  const ROUND_NAMES = ['Round of 16','Elite 8','Final Four','Championship'];
+  const ROUND_LABELS = ['R16','E8','F4','🏆'];
+  let bh = '';
+  S.bracket.forEach((round,ri) => {
+    bh += `<div><div class="br-lbl">${ROUND_NAMES[ri]}</div>`;
+    round.forEach((m,mi) => {
+      const isA = ri===S.currentRound && mi===S.currentMatchupIdx;
+      bh += `<div class="br-mu ${isA?'active':''} ${m.winner?'done':''}">`;
+      ['a','b'].forEach(s => {
+        const c=m[s],isW=c&&m.winner===c.id,isL=c&&m.winner&&m.winner!==c.id;
+        bh+=`<div class="br-slot ${isW?'win':''} ${isL?'lose':''} ${!c?'tbd':''}"><span style="font-size:11px">${c?c.emoji:'·'}</span><span style="flex:1">${c?c.name:'TBD'}</span></div>`;
+      });
+      bh += `</div>`;
+    });
+    bh += `</div>`;
+  });
+  document.getElementById('sbracket').innerHTML = bh;
+}
+
+// ── COMPANY CARD ───────────────────────────────────────────────
+function companyCard(co, hideStrategy) {
+  if (!co) return '<div style="flex:1"></div>';
+  const a = co.attributes;
+  const aList = [{k:'brandPower',l:'Brand Power'},{k:'costEfficiency',l:'Cost Efficiency'},{k:'customerLoyalty',l:'Customer Loyalty'},{k:'demandElasticity',l:'Demand Elasticity'},{k:'pricingFlexibility',l:'Pricing Flexibility'},{k:'channelStrength',l:'Channel Strength'}];
+  const stratH = hideStrategy
+    ? `<div class="shid">⬛ Strategy Hidden</div>`
+    : `<div class="stag ${sc(co.strategy)}">${co.strategy}</div>`;
+  const descH = hideStrategy
+    ? `<div class="shidc">📋 Strategy reveals after simulation. Read attributes + market condition to predict the winner.</div>`
+    : `<div class="sdesc">${co.description}</div>`;
+  return `<div class="co-card">
+    <div class="cchdr"><div class="cemoji">${co.emoji}</div><div><div class="cname">${co.name}</div><div class="ctagline">"${co.tagline}"</div>${stratH}</div></div>
+    <div class="ccbody">${descH}<div class="attrs">${aList.map(av=>`<div class="ar"><div class="albl">${av.l}</div><div class="abg"><div class="afill" style="width:${a[av.k]}%;background:${ac(a[av.k])}"></div></div><div class="aval">${a[av.k]}</div></div>`).join('')}</div>
+    <button class="ebtn" onclick="openEdit('${co.id}')">✏️ Edit</button></div>
+  </div>`;
+}
+
+// ── PHASES ─────────────────────────────────────────────────────
+function renderLobby() {
+  const COMPANIES_SAMPLE = ['apple','disneyplus','nike','netflix','starbucks','target','tesla','costco','walmart','ticketmaster','aldi','amazon','mcdonalds','delta','southwest','uber'];
+  const emojis = {apple:'🍎',disneyplus:'🏰',nike:'👟',netflix:'🎬',starbucks:'☕',target:'🎯',tesla:'⚡',costco:'🏬',walmart:'🏪',ticketmaster:'🎟️',aldi:'🛒',amazon:'📦',mcdonalds:'🍔',delta:'🛫',southwest:'✈️',uber:'🚗'};
+  const names  = {apple:'Apple',disneyplus:'Disney+',nike:'Nike',netflix:'Netflix',starbucks:'Starbucks',target:'Target',tesla:'Tesla',costco:'Costco',walmart:'Walmart',ticketmaster:'Ticketmaster',aldi:'Aldi',amazon:'Amazon',mcdonalds:"McDonald's",delta:'Delta',southwest:'Southwest',uber:'Uber'};
+  const chips  = COMPANIES_SAMPLE.map(id=>`<div class="chip"><span>${emojis[id]}</span>${names[id]}</div>`).join('');
+  const teams  = S.teams||[];
+  const trows  = teams.map(t=>`<div class="trow"><div class="tswch" style="background:${t.color}"></div><input class="tinp" value="${t.name}" maxlength="20" oninput="queueTeamUpdate('${t.id}',this.value)"><button class="tdel" onclick="removeTeam('${t.id}')">✕</button></div>`).join('');
+  document.getElementById('main').innerHTML=`
+    <div class="lobby">
+      <div class="ltitle">MARCH MADNESS<span>PRICING STRATEGY SHOWDOWN</span></div>
+      <div class="url-panel">
+        <div class="url-panel-lbl">📱 Student Join URL — Display on Projector</div>
+        <div class="url-display">${studentUrl}</div>
+        <div class="url-note">Students open this URL on their phones or laptops. You can start once they've all joined.</div>
+      </div>
+      <div class="chips">${chips}</div>
+      <div class="team-box">
+        <div class="team-box-title">👥 TEAM SETUP</div>
+        <div class="tgrid" id="tg">${trows}</div>
+        <div style="display:flex;gap:8px;margin-top:11px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-s btn-sm" onclick="addTeam()">+ Add Team</button>
+          <span style="font-size:11px;color:var(--t3)">${teams.length} teams · max 8 · students self-assign on their devices</span>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('tc').innerHTML=`
+    <button class="btn btn-g btn-lg" onclick="action('start')">🏀 START TOURNAMENT</button>
+    <div class="sep"></div>
+    <button class="btn btn-s" onclick="action('shuffle')">🔀 Shuffle</button>
+    <div class="f1"></div>
+    <button class="btn btn-d btn-sm" onclick="confirmReset()">↺ Reset</button>`;
+}
+
+function renderMatchup() {
+  if (!S.matchup) return;
+  const {a,b} = S.matchup;
+  const mi=S.matchupNum, mt=S.matchupTotal;
+  document.getElementById('main').innerHTML=`
+    <div class="mhdr"><h2>${(S.roundName||'').toUpperCase()} — MATCHUP ${mi} OF ${mt}</h2><p>Students are analyzing on their devices. Open voting when ready.</p></div>
+    <div style="background:rgba(245,200,66,0.06);border:1px dashed rgba(245,200,66,0.3);border-radius:var(--r);padding:11px 16px;text-align:center;font-size:12px;color:var(--gold)">🔒 Pricing strategies are hidden on all screens — reveal after simulation.</div>
+    <div class="cards">${companyCard(a,true)}<div class="vs-row"><div class="vs-txt">VS</div></div>${companyCard(b,true)}</div>`;
+  document.getElementById('tc').innerHTML=`
+    <button class="btn btn-p" onclick="action('openVoting')">⚡ REVEAL MARKET CONDITION &amp; OPEN VOTING</button>
+    <div class="sep"></div>
+    <button class="btn btn-s btn-sm" onclick="showBracket()">📊 Bracket</button>
+    <div class="f1"></div>
+    <button class="btn btn-d btn-sm" onclick="confirmReset()">↺ Reset</button>`;
+}
+
+function renderVoting() {
+  if (!S.matchup) return;
+  const {a,b} = S.matchup;
+  const cond = S.activeCondition;
+  const tvs  = S.teamVoteSummary || {};
+  const teams = S.teams || [];
+  const teamCards = teams.map(t => {
+    const tv = tvs[t.id]||{a:0,b:0};
+    const total = tv.a+tv.b;
+    const pctA = total>0? Math.round(tv.a/total*100) : 50;
+    const pctB = 100-pctA;
+    return `<div class="vf-team">
+      <div class="vf-tname"><div class="vf-tdot" style="background:${t.color}"></div>${t.name}</div>
+      <div class="vf-bar"><div class="vf-a" style="width:${pctA}%"></div><div class="vf-b" style="width:${pctB}%"></div></div>
+      <div class="vf-counts"><span style="color:var(--blue)">${tv.a} → ${a.name}</span><span style="color:var(--orange)">${tv.b} → ${b.name}</span></div>
+      <div class="vf-total">${total} voted</div>
+    </div>`;
+  }).join('');
+  document.getElementById('main').innerHTML=`
+    <div class="mkb" style="border-color:${cond.color};background:linear-gradient(135deg,${cond.color}12,${cond.color}04)">
+      <div class="mkb-icon">${cond.icon}</div>
+      <div><div class="mkb-ey">⚠️ Active Market Condition — Shown to all students</div><div class="mkb-name" style="color:${cond.color}">${cond.name}</div><div class="mkb-desc">${cond.description}</div></div>
+    </div>
+    <div class="cards">${companyCard(a,true)}<div class="vs-row"><div class="vs-txt">VS</div></div>${companyCard(b,true)}</div>
+    <div class="vote-feed">
+      <h3>📊 LIVE TEAM VOTE TRACKER — ${S.votedCount}/${S.totalStudents} STUDENTS VOTED</h3>
+      <div class="vf-teams">${teamCards}</div>
+    </div>`;
+  document.getElementById('tc').innerHTML=`
+    <button class="btn btn-run" onclick="action('runSim')">⚡ RUN MATCHUP SIMULATION</button>
+    <div class="sep"></div>
+    <span style="font-size:12px;color:var(--t2)">${S.votedCount}/${S.totalStudents} voted</span>
+    <div class="f1"></div>
+    <button class="btn btn-d btn-sm" onclick="confirmReset()">↺ Reset</button>`;
+}
+
+function renderSimulating() {
+  const cond = S.activeCondition;
+  if (!cond) return;
+  document.getElementById('main').innerHTML=`
+    <div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:36px;text-align:center">
+      <div style="font-family:'Russo One',sans-serif;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:var(--t3)">Running Simulation</div>
+      <div style="font-size:64px;animation:mR .5s cubic-bezier(0.175,0.885,0.32,1.275)">${cond.icon}</div>
+      <div style="font-family:'Russo One',sans-serif;font-size:28px;letter-spacing:3px;color:${cond.color};animation:fdU .4s .3s both">${cond.name}</div>
+      <div style="font-size:13px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;animation:fdU .4s .8s both">Calculating scores...</div>
+    </div>`;
+  document.getElementById('tc').innerHTML=`<span style="font-size:12px;color:var(--t2)">Simulation running...</span>`;
+}
+
+function renderResults() {
+  const r = S.lastResult;
+  if (!r || !S.matchup) return;
+  const {a,b} = S.matchup;
+  const cond = r.condition;
+  const bdH = (sd) => `<div class="sbrkdn">
+    <div class="sln"><span class="slbl">Brand Power</span><span class="sval">${sd.bd.brand}</span></div>
+    <div class="sln"><span class="slbl">Cost Efficiency</span><span class="sval">${sd.bd.cost}</span></div>
+    <div class="sln"><span class="slbl">Customer Loyalty</span><span class="sval">${sd.bd.loyal}</span></div>
+    <div class="sln"><span class="slbl">Elasticity</span><span class="sval">${sd.bd.elastic}</span></div>
+    <div class="sln"><span class="slbl">Flexibility</span><span class="sval">${sd.bd.flex}</span></div>
+    <div class="sln"><span class="slbl">Channel</span><span class="sval">${sd.bd.channel}</span></div>
+    <div class="sln"><span class="slbl">Strategy Fit</span><span class="sval ${sd.bd.sFit>=0?'p':'n'}">${sd.bd.sFit>0?'+':''}${sd.bd.sFit}</span></div>
+    <div class="sln"><span class="slbl">Market Bonus</span><span class="sval ${sd.bd.mkt>=0?'p':'n'}">${sd.bd.mkt>0?'+':''}${sd.bd.mkt}</span></div>
+    <div class="sln"><span class="slbl">Random</span><span class="sval ${sd.bd.rnd>=0?'p':'n'}">${sd.bd.rnd>0?'+':''}${sd.bd.rnd}</span></div>
+    <div class="stot"><span class="stot-l">TOTAL</span><span class="stot-v">${sd.total}</span></div>
+  </div>`;
+  const trHTML = (r.teamResults||[]).map(t => {
+    const vLabel = t.majority ? (t.majority==='a'?`${r.sA.co.name} (${t.votes.a}v)`:`${r.sB.co.name} (${t.votes.b}v)`) : 'No votes';
+    const cls = t.votes.a+t.votes.b===0 ? 'nv' : t.correct ? 'ok' : 'no';
+    return `<div class="trr ${cls}"><div class="trd" style="background:${(S.teams||[]).find(x=>x.id===t.teamId)?.color||'#888'}"></div><div class="trn">${t.name}</div><div class="trv">${vLabel}</div><div class="tro">${cls==='nv'?'—':cls==='ok'?'✅ Correct':'❌ Wrong'}</div>${t.correct?`<div class="trpts">+1 pt</div>`:'<div style="width:32px"></div>'}</div>`;
+  }).join('');
+  const isLast = S.bracket && S.currentRound===S.bracket.length-1 && S.currentMatchupIdx===S.bracket[S.currentRound].length-1;
+  document.getElementById('main').innerHTML=`
+    <div class="rw">
+      <div class="wann"><div class="wlbl">🏆 MATCHUP WINNER</div><div class="wname"><span style="font-size:44px">${r.winner.emoji}</span>${r.winner.name}</div><div class="wsub">def. ${r.loser.name} (${r.winner.total} – ${r.loser.total})</div></div>
+      <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--green);text-align:center;padding:4px;font-weight:700">🔓 PRICING STRATEGIES REVEALED</div>
+      <div class="cards">${companyCard(a,false)}<div class="vs-row"><div class="vs-txt">VS</div></div>${companyCard(b,false)}</div>
+      <div class="cond-card" style="border-color:${cond.color}28;background:linear-gradient(135deg,${cond.color}0c,transparent)"><div class="cond-icon">${cond.icon}</div><div><div class="cond-ey">Market Condition</div><div class="cond-name" style="color:${cond.color}">${cond.name}</div><div class="cond-desc">${cond.description}</div></div></div>
+      <div class="sgrid">
+        <div class="scard ${r.sA.id===r.winner.id?'sw':'sl'}"><div class="sname">${a?a.emoji:''} ${r.sA.co.name} ${r.sA.id===r.winner.id?'🏆':''}</div><div class="stag ${sc(r.sA.co.strategy)}" style="margin-bottom:8px">${r.sA.co.strategy}</div><div style="font-size:10px;color:var(--t3);margin-bottom:6px">Market bonus: <span style="color:${r.sA.rawMkt>=0?'var(--green)':'var(--red)'}">${r.sA.rawMkt>0?'+':''}${r.sA.rawMkt}</span></div>${bdH(r.sA)}</div>
+        <div class="svs">VS</div>
+        <div class="scard ${r.sB.id===r.winner.id?'sw':'sl'}"><div class="sname">${b?b.emoji:''} ${r.sB.co.name} ${r.sB.id===r.winner.id?'🏆':''}</div><div class="stag ${sc(r.sB.co.strategy)}" style="margin-bottom:8px">${r.sB.co.strategy}</div><div style="font-size:10px;color:var(--t3);margin-bottom:6px">Market bonus: <span style="color:${r.sB.rawMkt>=0?'var(--green)':'var(--red)'}">${r.sB.rawMkt>0?'+':''}${r.sB.rawMkt}</span></div>${bdH(r.sB)}</div>
+      </div>
+      <div class="expl"><div class="expl-lbl">📖 MARKETING ANALYSIS</div><div class="expl-txt">${r.explanation}</div></div>
+      <div class="trc"><div class="trc-title">📊 TEAM PREDICTIONS</div>${trHTML}</div>
+    </div>`;
+  document.getElementById('tc').innerHTML=`
+    ${isLast?`<button class="btn btn-g btn-lg" onclick="action('champion')">🏆 CROWN CHAMPION</button>`:`<button class="btn btn-p" onclick="action('next')">▶ NEXT MATCHUP</button>`}
+    <div class="sep"></div>
+    <button class="btn btn-s btn-sm" onclick="showBracket()">📊 Bracket</button>
+    <div class="f1"></div>
+    <button class="btn btn-d btn-sm" onclick="confirmReset()">↺ Reset</button>`;
+}
+
+function renderChampion() {
+  const r = S.lastResult;
+  const sorted = [...(S.teams||[])].sort((a,b)=>b.points-a.points);
+  const medals = ['🥇','🥈','🥉'];
+  const winner = r?.winner;
+  const lbH = sorted.map((t,i)=>`<div class="flbr ${i===0?'gr':''}"><div class="flbr-rank">${medals[i]||i+1}</div><div class="flbr-dot" style="background:${t.color}"></div><div class="flbr-name">${t.name}</div><div style="text-align:right"><div class="flbr-pts">${t.points} pts</div><div class="flbr-cor">${t.correctVotes}/${t.totalVotes} correct</div></div></div>`).join('');
+  document.getElementById('main').innerHTML=`
+    <div class="champ">
+      <div class="ch-crown">👑</div>
+      <div class="ch-lbl">PRICING STRATEGY SHOWDOWN CHAMPION</div>
+      ${winner?`<div class="ch-name"><span style="font-size:56px">${winner.emoji}</span>${winner.name}</div>
+      <div class="stag ${sc(winner.strategy)}" style="font-size:13px;padding:6px 15px">${winner.strategy}</div>
+      <p class="ch-sub">${winner.description||''}</p>`:''}
+      <div class="flb"><div style="font-family:'Russo One',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);text-align:center;margin-bottom:11px">FINAL TEAM STANDINGS</div>${lbH}</div>
+    </div>`;
+  document.getElementById('tc').innerHTML=`
+    <button class="btn btn-s" onclick="showBracket()">📊 Full Bracket</button>
+    <div class="sep"></div>
+    <button class="btn btn-d" onclick="confirmReset()">↺ New Tournament</button>`;
+  launchConfetti();
+}
+
+// ── TEAM MANAGEMENT ────────────────────────────────────────────
+let teamTimer = null;
+function queueTeamUpdate(id, val) {
+  const t = (S.teams||[]).find(x=>x.id===id);
+  if (t) t.name = val;
+  clearTimeout(teamTimer);
+  teamTimer = setTimeout(pushTeams, 600);
+}
+function pushTeams() { send({ type:'updateTeams', teams: S.teams }); }
+function addTeam() {
+  if ((S.teams||[]).length>=8) { alert('Max 8 teams'); return; }
+  const COLORS = ['#FF6B35','#3B7FE8','#1DB87A','#F5C842','#9B5CE8','#EC4899','#06B6D4','#F97316'];
+  const i = (S.teams||[]).length;
+  const t = { id:'t'+Date.now(), name:'Team '+(i+1), color:COLORS[i%COLORS.length], points:0, correctVotes:0, totalVotes:0 };
+  S.teams.push(t);
+  pushTeams();
+}
+function removeTeam(id) {
+  if ((S.teams||[]).length<=2) { alert('Min 2 teams'); return; }
+  S.teams = S.teams.filter(t=>t.id!==id);
+  pushTeams();
+}
+
+// ── COMPANY EDIT ───────────────────────────────────────────────
+const ALL_CO = {apple:{emoji:'🍎',name:'Apple'},disneyplus:{emoji:'🏰',name:'Disney+'},nike:{emoji:'👟',name:'Nike'},netflix:{emoji:'🎬',name:'Netflix'},starbucks:{emoji:'☕',name:'Starbucks'},target:{emoji:'🎯',name:'Target'},tesla:{emoji:'⚡',name:'Tesla'},costco:{emoji:'🏬',name:'Costco'},walmart:{emoji:'🏪',name:'Walmart'},ticketmaster:{emoji:'🎟️',name:'Ticketmaster'},aldi:{emoji:'🛒',name:'Aldi'},amazon:{emoji:'📦',name:'Amazon'},mcdonalds:{emoji:'🍔',name:"McDonald's"},delta:{emoji:'🛫',name:'Delta'},southwest:{emoji:'✈️',name:'Southwest'},uber:{emoji:'🚗',name:'Uber'}};
+const STRATS = ['Premium Pricing','Penetration Pricing','Competitive Pricing','Discount Pricing','Dynamic Pricing','Value Pricing','Psychological Pricing','Bundle Pricing'];
+const ATTRS  = [{k:'brandPower',l:'Brand Power'},{k:'costEfficiency',l:'Cost Efficiency'},{k:'customerLoyalty',l:'Customer Loyalty'},{k:'demandElasticity',l:'Demand Elasticity'},{k:'pricingFlexibility',l:'Pricing Flexibility'},{k:'channelStrength',l:'Channel Strength'}];
+
+function openEdit(id) {
+  const co = S.matchup?.a?.id===id ? S.matchup.a : S.matchup?.b;
+  if (!co) return;
+  const info = ALL_CO[id]||{};
+  const opts = STRATS.map(s=>`<option value="${s}" ${s===(co.strategy||'')?'selected':''}>${s}</option>`).join('');
+  const sliders = ATTRS.map(a=>`<div class="aer"><div class="ael">${a.l}</div><input type="range" min="1" max="100" value="${co.attributes[a.k]||50}" class="aesl" id="sl_${a.k}" oninput="document.getElementById('sv_${a.k}').textContent=this.value"><div class="aev" id="sv_${a.k}">${co.attributes[a.k]||50}</div></div>`).join('');
+  document.getElementById('mc').innerHTML=`
+    <div class="mov" onclick="if(event.target===this)closeModal()">
+      <div class="mbox">
+        <div class="mhd"><div class="mtitle">${info.emoji||''} Edit: ${info.name||id}</div><button class="mclose" onclick="closeModal()">×</button></div>
+        <div class="mbody">
+          <div class="fg"><label class="fl">Pricing Strategy</label><select class="fsel" id="editS">${opts}</select></div>
+          <div style="margin-top:12px"><div style="font-size:10px;font-weight:700;color:var(--t2);letter-spacing:1px;margin-bottom:8px">ATTRIBUTES (1-100)</div>${sliders}</div>
+        </div>
+        <div class="mfooter"><button class="btn btn-s btn-sm" onclick="closeModal()">Cancel</button><button class="btn btn-p" onclick="saveEdit('${id}')">Save</button></div>
+      </div>
+    </div>`;
+}
+function saveEdit(id) {
+  const attrs={};
+  ATTRS.forEach(a=>{const e=document.getElementById('sl_'+a.k);if(e)attrs[a.k]=parseInt(e.value);});
+  const s=document.getElementById('editS');
+  send({ type:'updateCompany', id, strategy:s?s.value:'', attributes:attrs });
+  closeModal();
+}
+function closeModal() { document.getElementById('mc').innerHTML=''; }
+
+// ── BRACKET MODAL ──────────────────────────────────────────────
+function showBracket() {
+  if (!S?.bracket) { alert('Tournament not started'); return; }
+  const ROUND_NAMES=['Round of 16','Elite 8','Final Four','Championship'];
+  const rH=S.bracket.map((round,ri)=>`<div><div style="font-family:'Russo One',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--b)">${ROUND_NAMES[ri]}</div>${round.map((m,mi)=>{const isA=ri===S.currentRound&&mi===S.currentMatchupIdx;return`<div style="background:${isA?'rgba(255,107,53,0.08)':'var(--bg3)'};border:1px solid ${isA?'var(--orange)':'var(--b2)'};border-radius:5px;padding:8px 10px;margin-bottom:5px">${['a','b'].map(s=>{const c=m[s];const isW=c&&m.winner===c.id;const isL=c&&m.winner&&m.winner!==c.id;return`<div style="display:flex;align-items:center;gap:5px;padding:2px 0;${isW?'color:var(--gold);font-weight:700;':isL?'opacity:0.4;text-decoration:line-through;':''}"><span style="font-size:11px">${c?c.emoji:'·'}</span><span style="font-size:11px">${c?c.name:'TBD'}</span>${isW?'<span>✓</span>':''}</div>`}).join('')}</div>`;}).join('')}</div>`).join('');
+  document.getElementById('mc').innerHTML=`<div class="mov" onclick="if(event.target===this)closeModal()"><div class="mbox" style="max-width:860px"><div class="mhd"><div class="mtitle">📊 Tournament Bracket</div><button class="mclose" onclick="closeModal()">×</button></div><div class="mbody"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:16px">${rH}</div></div><div class="mfooter"><button class="btn btn-p" onclick="closeModal()">Close</button></div></div></div>`;
+}
+
+// ── STRATEGIES MODAL ───────────────────────────────────────────
+const STRAT_INFO = {'Premium Pricing':{c:'s-prem',d:'Prices significantly above market average. Works with strong brand equity and inelastic customers.'},'Penetration Pricing':{c:'s-pen',d:'Intentionally low prices to grab market share. Sacrifices short-term profit for scale.'},'Competitive Pricing':{c:'s-com',d:'Prices in line with competitors. Relies on operational excellence.'},'Discount Pricing':{c:'s-dis',d:'Consistently lower prices than the market. Requires high cost efficiency.'},'Dynamic Pricing':{c:'s-dyn',d:'Real-time algorithmic adjustments. Maximizes revenue during demand surges.'},'Value Pricing':{c:'s-val',d:'Based on perceived customer value. Requires deep brand trust.'},'Psychological Pricing':{c:'s-psy',d:'Uses $9.99, anchoring, and charm pricing to influence decisions.'},'Bundle Pricing':{c:'s-bun',d:'Packages multiple products at a combined price. Locks in customers.'}};
+function showStrategies() {
+  const cards=Object.entries(STRAT_INFO).map(([n,d])=>`<div style="background:var(--bg3);border:1px solid var(--b2);border-radius:7px;padding:11px 13px"><div class="stag ${d.c}" style="margin-bottom:7px">${n}</div><div style="font-size:12px;color:var(--t2);line-height:1.5;font-family:'Barlow',sans-serif">${d.d}</div></div>`).join('');
+  document.getElementById('mc').innerHTML=`<div class="mov" onclick="if(event.target===this)closeModal()"><div class="mbox" style="max-width:760px"><div class="mhd"><div class="mtitle">📚 Pricing Strategies</div><button class="mclose" onclick="closeModal()">×</button></div><div class="mbody"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:9px">${cards}</div></div><div class="mfooter"><button class="btn btn-p" onclick="closeModal()">Close</button></div></div></div>`;
+}
+
+// ── UTILITIES ──────────────────────────────────────────────────
+function confirmReset() { if(confirm('Reset tournament?')) action('reset'); }
+function showToast(msg, color='var(--green)') {
+  const e=document.createElement('div');e.style.cssText=`position:fixed;top:70px;right:16px;background:var(--bg3);border:1px solid ${color};color:${color};padding:9px 15px;border-radius:7px;font-size:12px;font-weight:700;z-index:999`;
+  e.textContent=msg;document.body.appendChild(e);setTimeout(()=>e.remove(),2500);
+}
+function launchConfetti() {
+  const colors=['#FF6B35','#F5C842','#3B7FE8','#10B981','#EC4899','#A855F7'];
+  const c=document.createElement('div');c.className='ccc';document.body.appendChild(c);
+  for(let i=0;i<80;i++){const p=document.createElement('div');p.className='ccp';p.style.left=Math.random()*100+'vw';p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.width=(Math.random()*10+5)+'px';p.style.height=(Math.random()*10+5)+'px';p.style.borderRadius=Math.random()>.5?'50%':'2px';p.style.animationDuration=(Math.random()*3+2)+'s';p.style.animationDelay=(Math.random()*2)+'s';c.appendChild(p);}
+  setTimeout(()=>c.remove(),6000);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+</script>
+</body>
+</html>
